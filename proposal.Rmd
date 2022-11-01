@@ -1,6 +1,16 @@
 # Proposal
 
-## Research topic
+## Research topic  
+In 2015, the United Nations Sustainable Development Summit approved 17 sustainable development goals (SDG). Proper and quality education for every child in this world is always one of the goals. However, children of least-developed countries and some developing countries are not guaranteed equal education. Let alone children with functional difficulties.  
+  
+Children with functional difficulties could experience various limitations, such as communication, self-care, and mobility difficulties. Creating an appropriate learning environment and suitable teaching strategies for children with disabilities is challenging, leading to a lower percentage of education for children with disabilities. Even worse, the pandemic during the last three years has severely influenced the world, including education. Nearly half of the in-person instruction was closed during the pandemic. Remote learning has become the only solution for all students across the globe. However, not every region and child has proper equipment and stable internet access.   
+  
+The dataset from UNICEF focuses on the education of the least developed and developing countries for children with and without functional difficulties, aiming to understand the percentage of education completeness in different countries, education levels, and genders. The latest update was in December 2021. Although not every country’s data is updated, we still hope to find the influence of the pandemic.
+  
+Citation:  
+The 17 Sustainable Development Goals: https://sdgs.un.org/goals  
+The 4$^{\text{th}}$ Goal (Quality Education): https://sdgs.un.org/goals/goal4 
+ 
 
 ## Data availability
 
