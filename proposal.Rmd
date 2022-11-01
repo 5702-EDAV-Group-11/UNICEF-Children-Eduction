@@ -1,5 +1,5 @@
 # Proposal
-<<<<<<< HEAD
+
  
 ## Research topic  
 In 2015, the United Nations Sustainable Development Summit approved 17 sustainable development goals (SDG). Proper and quality education for every child in this world is always one of the goals. However, children of least-developed countries and some developing countries are not guaranteed equal education. Let alone children with functional difficulties.  
