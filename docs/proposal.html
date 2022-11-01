@@ -69,7 +69,7 @@
       <nav role="navigation">
 
 <ul class="summary">
-<li><a href="./">Quality Education</a></li>
+<li><a href="./">Children's Education</a></li>
 
 <li class="divider"></li>
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
@@ -114,11 +114,21 @@
 <p>Children with functional difficulties could experience various limitations, such as communication, self-care, and mobility difficulties. Creating an appropriate learning environment and suitable teaching strategies for children with disabilities is challenging, leading to a lower percentage of education for children with disabilities. Even worse, the pandemic during the last three years has severely influenced the world, including education. Nearly half of the in-person instruction was closed during the pandemic. Remote learning has become the only solution for all students across the globe. However, not every region and child has proper equipment and stable internet access.</p>
 <p>The data set from UNICEF focuses on the education of the least developed and developing countries for children with and without functional difficulties, aiming to understand the percentage of education completeness in different countries, education levels, and genders. The latest update was in December 2021. Although not every country’s data is updated, we still hope to find the influence of the pandemic.</p>
 <p>Citation:<br />
-The 17 Sustainable Development Goals: <a href="https://sdgs.un.org/goals" class="uri">https://sdgs.un.org/goals</a><br />
-The 4<span class="math inline">\(^{\text{th}}\)</span> Goal (Quality Education): <a href="https://sdgs.un.org/goals/goal4" class="uri">https://sdgs.un.org/goals/goal4</a></p>
+<a href="https://sdgs.un.org/goals">The 17 Sustainable Development Goals</a><br />
+<a href="https://sdgs.un.org/goals/goal4">The 4<span class="math inline">\(^{\text{th}}\)</span> Goal (Quality Education)</a></p>
 </div>
 <div id="data-availability" class="section level2 hasAnchor" number="2.2">
 <h2><span class="header-section-number">2.2</span> Data availability<a href="proposal.html#data-availability" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>We are interested in children’s education, and UNICEF was the first site we visited for data. There is one dataset provided on the site for children with disabilities. The completeness and availability are the top two reasons why we considered it to be suitable for our topic.</p>
+<p>UNICEF maintains the dataset. The UNICEF Global databases contain a set of 202 countries as reported on through the State of the World’s Children Statistical Annex 2017. And the format of data collected is excel.</p>
+<p>By the cover page of the dataset, the data was collected from the 6th round of the Multiple Indicator Cluster Survey (MICS6). The dataset provides information on four education indicators (Adjusted net attendance rate (ANAR), Out of school rate (OOR), Completion rate, and foundational learning skills) supporting national education monitoring for children with and without disabilities in 32 countries and areas. The dataset takes levels of education into account for two indicators: Adjusted net attendance rate (ANAR) and Out of school rate (OOR). The Completion rate is recorded on the primary level only. Foundational learning skills consist of foundational reading and numeracy skills, recorded for children aged 7 to 14.</p>
+<p>The data is only available in Excel. There are ten sheets in the spreadsheet: nine data sheets and one cover page. The cover sheet provides a brief introduction and explanation of the data and variables. Three sheets are available for the Adjusted net attendance rate and the Out of school rate for three levels of education (primary, lower secondary, and upper secondary). The remaining three sheets are for Completion rate, foundational reading skill, and foundational numeracy skill. If any questions arise from the data, we can contact UNICEF Data.</p>
+<p>Since the data is available in Excel, we can directly load the “readxl” package in R and use the “read_excel” function to import the data. After importing the data, we will process the missing values and try to minimize the influence of time inconsistency.</p>
+<p>There are three potential issues relating to data quality. The data for different countries and areas are estimated values by point estimating, so there is a gap between the estimated value and real value. Also, the sample sizes for those countries and areas are unknown. The years in which the data collection took place differ for different countries and areas. Though not by a large percentage, there are some missing values.</p>
+<p>Citation:<br />
+<a href="https://data.unicef.org/resources/mics-education-analysis-for-global-learning-and-equity/">Multiple Indicator Cluster Survey - Education Analysis for Global Learning and Equity</a><br />
+<a href="https://data.unicef.org/contact/">Contact Us: UNICEF</a><a href="https://data.unicef.org/contact/">DATA</a><br />
+<a href="https://data.unicef.org/resources/education-for-children-with-disabilities/">Database on education for children with disability</a></p>
 
 </div>
 </div>
