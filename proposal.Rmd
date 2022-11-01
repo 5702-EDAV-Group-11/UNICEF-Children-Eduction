@@ -14,4 +14,20 @@ The 4$^{\text{th}}$ Goal (Quality Education): https://sdgs.un.org/goals/goal4
  
  
 ## Data availability
+We are interested in children’s education, and UNICEF was the first site we visited for data. There is one dataset provided on the site for children with disabilities. The completeness and availability are the top two reasons why we considered it to be suitable for our topic. 
+
+UNICEF maintains the dataset. The UNICEF Global databases contain a set of 202 countries as reported on through the State of the World's Children Statistical Annex 2017. And the format of data collected is excel.
+
+By the cover page of the dataset, the data was collected from the 6th round of the Multiple Indicator Cluster Survey (MICS6). The dataset provides information on four education indicators (Adjusted net attendance rate (ANAR), Out of school rate (OOR), Completion rate, and foundational learning skills) supporting national education monitoring for children with and without disabilities in 32 countries and areas. The dataset takes levels of education into account for two indicators: Adjusted net attendance rate (ANAR) and Out of school rate (OOR). The Completion rate is recorded on the primary level only. Foundational learning skills consist of foundational reading and numeracy skills, recorded for children aged 7 to 14.
+
+The data is only available in Excel. There are ten sheets in the spreadsheet: nine data sheets and one cover page. The cover sheet provides a brief introduction and explanation of the data and variables. Three sheets are available for the Adjusted net attendance rate and the Out of school rate for three levels of education (primary, lower secondary, and upper secondary). The remaining three sheets are for Completion rate, foundational reading skill, and foundational numeracy skill. If any questions arise from the data, we can contact UNICEF Data.
+
+Since the data is available in Excel, we can directly load the “readxl” package in R and use the “read_excel” function to import the data.
+After importing the data, we will process the missing values and try to minimize the influence of time inconsistency.
+
+There are three potential issues relating to data quality. The data for different countries and areas are estimated values by point estimating, so there is a gap between the estimated value and real value. Also, the sample sizes for those countries and areas are unknown. The years in which the data collection took place differ for different countries and areas. Though not by a large percentage, there are some missing values.
+
+Citation:
+Multiple Indicator Cluster Survey - Education Analysis for Global Learning and Equity: https://data.unicef.org/resources/mics-education-analysis-for-global-learning-and-equity/
+UNICEF DATA: https://data.unicef.org/contact/
 
