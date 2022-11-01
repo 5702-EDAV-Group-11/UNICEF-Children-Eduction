@@ -12,6 +12,6 @@ Citation:
 The 17 Sustainable Development Goals: https://sdgs.un.org/goals  
 The 4$^{\text{th}}$ Goal (Quality Education): https://sdgs.un.org/goals/goal4 
  
-
+ 
 ## Data availability
 
