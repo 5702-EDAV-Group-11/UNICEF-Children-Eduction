@@ -5,5 +5,12 @@ date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
 ---
 
-# Introduction
+# Introduction  
+As we all know, education is important for all countries worldwide, especially for children. The common goal is to let more and more children receive a high-quality education, even in developing countries. While achieving this goal, there is a specific group of people that we can not ignore – children with functional difficulties.   
+  
+Compared with healthy children, children with functional difficulties have more difficulties and disadvantages in the process of survival and development due to their physical and mental characteristics and lack of social support. Therefore, they are a vulnerable group that needs special care, special support, and special protection. Like all other children, children with functional difficulties share the right to life development and education. The level of education and rehabilitation of children with functional difficulties also reflects social civilization and progress. Accordingly, we must pay great attention to the education attainment worldwide for children with functional difficulties.  
+  
+We find a data set from UNICEF, focusing on the education of the least developed and developing countries for children with and without functional difficulties. We hope to express a clear picture of the educational attainment worldwide for children with and without functional difficulties to our readers. So that we can explore more about what we can do to help children with functional difficulties together.  
+  
+Since the data is labeled with development levels and divided into male, female, urban, and rural, we are going to compare the influences of development levels, genders, and regions on Adjusted net attendance rate (ANAR) and Out-of-school children rate(OOSR) for all primary, lower secondary, and upper secondary education levels, the Completion Rate for primary level, and the Functional Learning Skills(reading and numeracy).   
 
