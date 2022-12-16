@@ -1,2 +1,20 @@
-# Conclusion
-
+# Conclusion  
+  
+## Main Takaways    
+In general, among all countries, no matter how developed the country is, children with disabilities scored less than children without disabilities in terms of foundational reading and numeracy skills, which can be explained by the relatively low school attendance rate and primary education completion rate and the relatively high out-of-school rate. The gap between the average score for foundational skills of children with and without disabilities decreases as the country’s development level goes up. Over the years, the education level generally increases, and the increase rate is higher in more developed countries. The education level of all female and urban children also increases faster in more developed countries. However, looking at the highest percentage of children with disabilities completing primary education, we know a lot of work still needs to be done. Moreover, gender and region are two special categories. Gender is not an influential category, while region indicates that children in urban areas had higher attendance rates in all education levels and foundational learning skills than children in rural areas.     
+  
+## Limitation    
+Although we have many conclusions from the ten groups of graphs, there are several limitations. First, as we mentioned, some missing values are hard to impute. We finally decided to remove those values. However, they might change some conclusions.   
+  
+The dataset consists of 32 countries for the least and less developed countries. However, UNICEF collected data from each country in different years. The inconsistency of Time increases the difficulty of analysis. Also, the variable Time is misleading; some are in the format “yyyy-yyyy” while others are “yyyy.” Without any explanation, we assume the first year mentioned in Time is the year the data collected. If we could accurately describe the time variable, the conclusion might be more precise regarding the changes over Time. 
+  
+This project aims to discover the influence of different categories on the nine indicators. Thus, we chose to use the point estimate. However, we did not use the upper and lower limits included in the data. Since the statistics we had are estimations, including the upper and lower bounds might provide more information.
+   
+## Future Directions and Lessons Learned  
+Considering the difficulties we encountered with the dataset, we could spend more time researching the dataset's variables and make more confident decisions. Also, finding other sources for this topic might help us make decisions.    
+  
+We have analyzed education for children with and without disabilities in less developed countries, and exploring education in more developed countries can benefit the whole picture. In this project, we also have looked at how education levels differ by development levels, genders, and regions. Still, we have not considered how geography, religion, and other factors might contribute to the result. We can combine these factors in the future to see if more data and features can tell a different story.  
+  
+Drawing graphs can be easy but using the correct chart to produce an informative analysis and convert the visualization into a nontechnical description takes a lot of work. It is crucial to pick out the features that tell the most logical and wholesome story. Every set of features can make a plot convey some information, but some features will more efficiently display relationships. Eyeballing connections is one way of selecting features, but subsetting the data frame and making mini-plots might be more helpful.  
+  
+Last but not least, when presenting our results, having a clear logic for the order of graphs and the differences between sections is essential. Spending more time on the logic can make the report more readable.

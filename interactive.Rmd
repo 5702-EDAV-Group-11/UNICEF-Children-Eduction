@@ -1,3 +1,4 @@
 # Interactive component
 
 
+<iframe src="data/children.html" width="800" height="900"></iframe>

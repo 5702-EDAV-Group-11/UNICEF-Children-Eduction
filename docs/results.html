@@ -23,7 +23,7 @@
 <meta name="author" content="Ning Kang, Ruoyu Chen, Yitong Zhou" />
 
 
-<meta name="date" content="2022-12-14" />
+<meta name="date" content="2022-12-15" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -84,9 +84,31 @@
 <li class="chapter" data-level="3.2" data-path="data.html"><a href="data.html#cleaning-transformation"><i class="fa fa-check"></i><b>3.2</b> Cleaning / transformation</a></li>
 <li class="chapter" data-level="3.3" data-path="data.html"><a href="data.html#missing-value-analysis"><i class="fa fa-check"></i><b>3.3</b> Missing value analysis</a></li>
 </ul></li>
-<li class="chapter" data-level="4" data-path="results.html"><a href="results.html"><i class="fa fa-check"></i><b>4</b> Results</a></li>
+<li class="chapter" data-level="4" data-path="results.html"><a href="results.html"><i class="fa fa-check"></i><b>4</b> Results</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="results.html"><a href="results.html#analysis-of-indicators-mean-point-estimate"><i class="fa fa-check"></i><b>4.1</b> Analysis of Indicators’ Mean Point Estimate</a>
+<ul>
+<li class="chapter" data-level="4.1.1" data-path="results.html"><a href="results.html#mean-point-estimate-by-development-levels"><i class="fa fa-check"></i><b>4.1.1</b> Mean Point Estimate by Development Levels</a></li>
+<li class="chapter" data-level="4.1.2" data-path="results.html"><a href="results.html#indicators-mean-point-estimate-evaluations-by-development-levels"><i class="fa fa-check"></i><b>4.1.2</b> Indicators’ Mean Point Estimate Evaluations by Development Levels</a></li>
+<li class="chapter" data-level="4.1.3" data-path="results.html"><a href="results.html#mean-point-estimate-by-development-levels-gender-and-region"><i class="fa fa-check"></i><b>4.1.3</b> Mean Point Estimate by Development Levels, Gender, and Region</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="results.html"><a href="results.html#analysis-of-individual-indicators-point-estimate"><i class="fa fa-check"></i><b>4.2</b> Analysis of Individual Indicators’ Point Estimate</a>
+<ul>
+<li class="chapter" data-level="4.2.1" data-path="results.html"><a href="results.html#difficulty-point-estimate-by-gender"><i class="fa fa-check"></i><b>4.2.1</b> Difficulty Point Estimate by Gender</a></li>
+<li class="chapter" data-level="4.2.2" data-path="results.html"><a href="results.html#difficulty-point-estimate-by-region"><i class="fa fa-check"></i><b>4.2.2</b> Difficulty Point Estimate by Region</a></li>
+<li class="chapter" data-level="4.2.3" data-path="results.html"><a href="results.html#completion-rate-primary-difficulty-point-estimate"><i class="fa fa-check"></i><b>4.2.3</b> Completion Rate Primary Difficulty Point Estimate</a></li>
+<li class="chapter" data-level="4.2.4" data-path="results.html"><a href="results.html#comparison-between-education-levels"><i class="fa fa-check"></i><b>4.2.4</b> Comparison between Education Levels</a></li>
+<li class="chapter" data-level="4.2.5" data-path="results.html"><a href="results.html#functional-learning-skills-total-point-estimate"><i class="fa fa-check"></i><b>4.2.5</b> Functional Learning Skills Total Point Estimate</a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="results.html"><a href="results.html#relationship-between-point-estimates"><i class="fa fa-check"></i><b>4.3</b> Relationship between Point Estimates</a></li>
+</ul></li>
 <li class="chapter" data-level="5" data-path="interactive-component.html"><a href="interactive-component.html"><i class="fa fa-check"></i><b>5</b> Interactive component</a></li>
-<li class="chapter" data-level="6" data-path="conclusion.html"><a href="conclusion.html"><i class="fa fa-check"></i><b>6</b> Conclusion</a></li>
+<li class="chapter" data-level="6" data-path="conclusion.html"><a href="conclusion.html"><i class="fa fa-check"></i><b>6</b> Conclusion</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="conclusion.html"><a href="conclusion.html#main-takaways"><i class="fa fa-check"></i><b>6.1</b> Main Takaways</a></li>
+<li class="chapter" data-level="6.2" data-path="conclusion.html"><a href="conclusion.html#limitation"><i class="fa fa-check"></i><b>6.2</b> Limitation</a></li>
+<li class="chapter" data-level="6.3" data-path="conclusion.html"><a href="conclusion.html#future-directions-and-lessons-learned"><i class="fa fa-check"></i><b>6.3</b> Future Directions and Lessons Learned</a></li>
+</ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
 </ul>
@@ -108,7 +130,148 @@
             <section class="normal" id="section-">
 <div id="results" class="section level1 hasAnchor" number="4">
 <h1><span class="header-section-number">Chapter 4</span> Results<a href="results.html#results" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>Our analysis is divided into three sections. First, we checked the overall performance by using the mean point estimate. By different combinations, we concluded that countries’ development levels had some effects on the overall educational attainment of children with and without functional difficulties. Also, females and urban areas had better comprehensive performances than males and rural regions. Children without functional difficulties perform better than children with functional difficulties. These conclusions all match our intuition. However, to ensure some extreme outliers do not influence the mean point estimates, we looked closely at each indicator with the actual data.</p>
+<p>In the second section, we first explored the influence of gender and region on attendance, out-of-school, and completion rates across the years. Although it’s hard to conclude genders’ impact, the gap in attendance, out-of-school, and completion rates between genders decreased over the years. For the region, we got the same conclusion - urban areas had better educational attainment. Then, we checked the attendance and out-of-school rates among the three education levels. The attendance rate is decreasing in primary, lower secondary, and upper secondary. Thus, many children attended schools but failed to finish their secondary education. It follows that children had better reading skills than numeracy skills, which might be because numeracy skills need more practice in school, while the high out-of-school rate for secondary school prevented students’ learning.</p>
+<p>In the end, each indicator includes three groups of children: all the children, children with disabilities,and children without disabilities. We explored the relationship between these three variables. We concluded children with disabilities should be a small portion of the population since the total performance is almost the same value as the performance of children without disabilities. In contrast, children with disabilities generally have a lower scores.</p>
+<div id="analysis-of-indicators-mean-point-estimate" class="section level2 hasAnchor" number="4.1">
+<h2><span class="header-section-number">4.1</span> Analysis of Indicators’ Mean Point Estimate<a href="results.html#analysis-of-indicators-mean-point-estimate" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The following analyses are based on the mean point estimate of ANAR(Primary, Lower Secondary, Upper Secondary), Completion Rate, and Foundational Learning Skills(Reading, Numeracy). OOSR indicator is calculated separately since it will negatively influence the mean point estimate.</p>
+<div id="mean-point-estimate-by-development-levels" class="section level3 hasAnchor" number="4.1.1">
+<h3><span class="header-section-number">4.1.1</span> Mean Point Estimate by Development Levels<a href="results.html#mean-point-estimate-by-development-levels" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+The figure below used the mean point estimate of ANAR(Primary, Lower Secondary, Upper Secondary), Completion Rate, and Foundational Learning Skills(Reading, Numeracy) because a higher value means better performance for all indicators.<br />
+Surprisingly, less-developed countries had a lower mean in 2017 than least-developed countries. However, considering that data was only collected in 5 countries in 2017, it is possible that outliers decreased the mean of less developed countries.<br />
+In 2018, the plot showed that countries with high development levels had higher mean indicators for children with and without disabilities.<br />
+In 2019, there were no significant differences between less developed countries and more developed countries. More developed countries had a lower mean in the education level of children with and without disabilities. The least developed countries had a much lower mean than the rest.<br />
+Over the years, the education level of children with and without disabilities decreased for least and more developed countries and increased for less developed countries. Education levels for children with and without disabilities increased similarly in less developed countries. The gap between the education levels of children with disabilities and without disabilities is the smallest in less developed countries and the largest in more developed countries.<br />
 
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-11"></span>
+<img src="finalproj_files/figure-html/unnamed-chunk-11-1.png" alt="Mean Point Estimate by Development Levels" width="672" />
+<p class="caption">
+Figure 4.1: Mean Point Estimate by Development Levels
+</p>
+</div>
+</div>
+<div id="indicators-mean-point-estimate-evaluations-by-development-levels" class="section level3 hasAnchor" number="4.1.2">
+<h3><span class="header-section-number">4.1.2</span> Indicators’ Mean Point Estimate Evaluations by Development Levels<a href="results.html#indicators-mean-point-estimate-evaluations-by-development-levels" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The Cleveland Dot Plot on the left contains mean point estimates across the years for six indicators. Of the six indicators, half of them are missing in more-developed countries. For other indicators, more-developed countries have higher means in ANAR Primary, Foundational Reading Skills, and Foundational Numeracy Skills for children with and without disabilities. Also, children without disabilities scored higher in attendance rate, completion rate, and foundational numeracy and reading skills than children with disabilities. We can also see in the graph that for all children, the attendance rate of lower secondary is 25% higher than that of upper secondary, and the attendance rate of primary education is about 45% higher than that of lower secondary. These drops in attendance rates were about the same for children with and without disabilities.</p>
+The Cleveland Plot on the right is for out-of-school rates. The least developed countries had the highest upper-secondary out-of-school rate at around 30% and the highest out-of-school rates for primary and lower secondary. Least-developed countries had a higher out-of-school for primary than lower secondary, while less-developed countries had similar out-of-school for lower secondary and primary. More developed countries only had data on out-of-school rates for primary education, which is the lowest among the indicator means of three development levels. Also, children without disabilities had a lower out-of-school rate for all levels of education across all countries than children with disabilities.<br />
+
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-12"></span>
+<img src="finalproj_files/figure-html/unnamed-chunk-12-1.png" alt="Indicator Evaluations by Development Levels" width="100%" />
+<p class="caption">
+Figure 4.2: Indicator Evaluations by Development Levels
+</p>
+</div>
+</div>
+<div id="mean-point-estimate-by-development-levels-gender-and-region" class="section level3 hasAnchor" number="4.1.3">
+<h3><span class="header-section-number">4.1.3</span> Mean Point Estimate by Development Levels, Gender, and Region<a href="results.html#mean-point-estimate-by-development-levels-gender-and-region" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+The mean point estimate is calculated by taking the means of all indicators except out-of-school indicators collected from 2017 to 2019. No data was collected for females in more developed countries.<br />
+Females performed better than males in all countries, with or without disabilities, which is similar to the conclusion drawn from the previous two Cleveland Dot Plots that female and male children without disabilities had better numeracy and reading skills and higher attendance rates than children with disabilities. Also, the more developed the country, the more significant the gap between the performance of children with and without disabilities.<br />
+Urban areas generally had higher means than rural areas, especially for least developed countries. Unlike genders, development levels did not considerably influence regions — the more developed the country, the smaller the gap. Also, children with disabilities in rural areas are doing not as well as children without disabilities, but the difference is not as big as in urban areas.<br />
+
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-13"></span>
+<img src="finalproj_files/figure-html/unnamed-chunk-13-1.png" alt="Difficulty Point Estimate by Development Levels, Gender, and Region" width="672" />
+<p class="caption">
+Figure 4.3: Difficulty Point Estimate by Development Levels, Gender, and Region
+</p>
+</div>
+</div>
+</div>
+<div id="analysis-of-individual-indicators-point-estimate" class="section level2 hasAnchor" number="4.2">
+<h2><span class="header-section-number">4.2</span> Analysis of Individual Indicators’ Point Estimate<a href="results.html#analysis-of-individual-indicators-point-estimate" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="difficulty-point-estimate-by-gender" class="section level3 hasAnchor" number="4.2.1">
+<h3><span class="header-section-number">4.2.1</span> Difficulty Point Estimate by Gender<a href="results.html#difficulty-point-estimate-by-gender" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>When considering the attendance rates or out-of-school rates of children especially in least and less developed countries, it is very natural to consider the influence of gender. From the group of bar charts shown below, there is no clear overall pattern. However, we can see that for primary and lower secondary education level, the ANAR gap between gender decreases as time goes. Thus, gender is not an influential factor for attendance rate and out-of-school rate individually.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-14"></span>
+<img src="finalproj_files/figure-html/unnamed-chunk-14-1.png" alt="Difficulty Point Estimate by Gender" width="100%" />
+<p class="caption">
+Figure 4.4: Difficulty Point Estimate by Gender
+</p>
+</div>
+</div>
+<div id="difficulty-point-estimate-by-region" class="section level3 hasAnchor" number="4.2.2">
+<h3><span class="header-section-number">4.2.2</span> Difficulty Point Estimate by Region<a href="results.html#difficulty-point-estimate-by-region" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The following group of bar charts shows how region affects ANAR and OOSR. Children in urban areas had higher attendance than those in rural areas. The data from OOSR confirms this conclusion since children in rural areas had higher out-of-school rates than those in urban areas. Also, functional difficulties did not affect the considerable gap between urban and rural areas. Thus, region had a profound impact on a child’s educational attainment.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-15"></span>
+<img src="finalproj_files/figure-html/unnamed-chunk-15-1.png" alt="Difficulty Point Estimate by Region" width="100%" />
+<p class="caption">
+Figure 4.5: Difficulty Point Estimate by Region
+</p>
+</div>
+</div>
+<div id="completion-rate-primary-difficulty-point-estimate" class="section level3 hasAnchor" number="4.2.3">
+<h3><span class="header-section-number">4.2.3</span> Completion Rate Primary Difficulty Point Estimate<a href="results.html#completion-rate-primary-difficulty-point-estimate" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+The completion rate is “Percentage of cohort of children or young people three to five years older than the intended age for the last grade of each level of education.”<br />
+The left-hand-side bar chart presents whether gender affects children’s primary completion rate. Females have a higher completion rate than males, which is valid for children with and without functional disabilities. However, we can see that the gap between females and males decreased.<br />
+The right-hand-side bar chart shows that children in urban areas have much higher completion rates than children in rural areas. Although children are three to five years older than the intended age of primary education, urban areas still have a higher completion rate. Thus, the urban and rural gap matches our common sense that urban areas have more educational resources and higher education coverage rates.<br />
+
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-16"></span>
+<img src="finalproj_files/figure-html/unnamed-chunk-16-1.png" alt="Completion Rate Primary Point Estimate" width="100%" />
+<p class="caption">
+Figure 4.6: Completion Rate Primary Point Estimate
+</p>
+</div>
+</div>
+<div id="comparison-between-education-levels" class="section level3 hasAnchor" number="4.2.4">
+<h3><span class="header-section-number">4.2.4</span> Comparison between Education Levels<a href="results.html#comparison-between-education-levels" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+The following two plots compared the total point estimate of ANAR and OOSR for all three education levels.<br />
+The graph below shows the point estimate of ANAR for the three education levels: primary, lower secondary, and upper secondary. All three years shows that children at the primary education level tended to have higher attendance rate than the other higher levels.<br />
+
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-17"></span>
+<img src="finalproj_files/figure-html/unnamed-chunk-17-1.png" alt=" Comparison between Education Levels" width="672" />
+<p class="caption">
+Figure 4.7:  Comparison between Education Levels
+</p>
+</div>
+The graph below shows the point estimate of OOSR for the three education levels: primary, lower secondary, and upper secondary. All three years shows children in upper secondary education level tend to have higher out-of-school rate than the other higher levels.<br />
+
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-18"></span>
+<img src="finalproj_files/figure-html/unnamed-chunk-18-1.png" alt=" Comparison between Education Levels" width="672" />
+<p class="caption">
+Figure 4.8:  Comparison between Education Levels
+</p>
+</div>
+<p>Combine the observations from the two Cleveland dot plots, we can conclude that children received the most basic education, but were prone to drop out of school before the age of 18. Thus, they still did not receive a complete K-12 education.</p>
+</div>
+<div id="functional-learning-skills-total-point-estimate" class="section level3 hasAnchor" number="4.2.5">
+<h3><span class="header-section-number">4.2.5</span> Functional Learning Skills Total Point Estimate<a href="results.html#functional-learning-skills-total-point-estimate" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>This Cleveland dot plot shows the total point estimate of children’s foundational learning skills. The blue dot, represents reading skills, are almost always greater than the red one, which means numeracy skills. Thus, children with and without functional difficulties had higher reading skills than numeracy skills. It makes sense since word recognition, literal questions, and inferential question are frequently in contact in their daily life. Then recall that children have higher out-of-school rate in upper secondary school; so they did not have the opportunity to have more practice on numeracy skills, which usually require more time to success.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-19"></span>
+<img src="finalproj_files/figure-html/unnamed-chunk-19-1.png" alt=" Comparison between Education Levels" width="672" />
+<p class="caption">
+Figure 4.9:  Comparison between Education Levels
+</p>
+</div>
+</div>
+</div>
+<div id="relationship-between-point-estimates" class="section level2 hasAnchor" number="4.3">
+<h2><span class="header-section-number">4.3</span> Relationship between Point Estimates<a href="results.html#relationship-between-point-estimates" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+We are going to use the following parallel coordinate charts to explore the relationship between total point estimate, point estimate with functional difficulties, and point estimate without functional difficulties.<br />
+
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-20"></span>
+<img src="finalproj_files/figure-html/unnamed-chunk-20-1.png" alt="Relationship between ANAR Indicator's Point Estimates" width="100%" />
+<p class="caption">
+Figure 4.10: Relationship between ANAR Indicator’s Point Estimates
+</p>
+</div>
+<p>For the three indicators of ANAR, the point estimate of total children and the point estimation of children without difficulties has a clear parallel relationship. Also, they have almost the same values. Although “with_point_estimate” has some differences from “without_point_estimate,” the overall trend is a parallel relationship. There is some unique information for the three indicators.<br />
+a) ANAR Primary: there are two outliers, one in 2018 and the other in 2019.<br />
+b) ANAR Lower Secondary: The variation of point estimate is more significant than the ANAR Primary indicator.<br />
+c) ANAR Upper Secondary: Nearly half of the “with_point_estimate” is higher than “without_point_estimate” in 2019.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:unnamed-chunk-21"></span>
+<img src="finalproj_files/figure-html/unnamed-chunk-21-1.png" alt="Relationship between OOSR Indicator's Point Estimates" width="100%" />
+<p class="caption">
+Figure 4.11: Relationship between OOSR Indicator’s Point Estimates
+</p>
+</div>
+<p>For the three indicators of OOSR, point estimate of total children and the point estimate of children without difficulties has parallel relationship.<br />
+Specifically,<br />
+a) OOSR Primary: variable with_point_estimate tend to have parallel relationship with variable without_point_estimate. Also, there are two outliers.<br />
+b) OOSR Lower Secondary: most of the value in variable with_point_estimate have higher value than without_point_estimate in year 2018; but the overall relationship is still parallel.<br />
+c)OOSR Upper Secondary: year 2018 and 2019’s without_point_estimate and with_point_estimate have similar value. However, for year 2017, without_point_estimate and with_point estimate have negative relationship.</p>
+<p>We can see that total point estimate and point estimate with functional difficulties are almost the same. Considering point estimate with functional difficulties fluctuated around the value of total point estimate, the number of children with functional difficulties should be a small portion of the survey’s total population so that its value did not influence the consistence between total point estimate and point estimate without functional difficulties.</p>
+
+</div>
 </div>
             </section>
 

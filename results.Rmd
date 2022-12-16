@@ -1,1 +1,605 @@
 # Results
+```{r,message=FALSE,warning = FALSE, eval = TRUE}
+#necessary packages
+library(readxl)
+library(mice)
+library(lubridate)
+library(tidyverse)
+library(dplyr)
+library(VIM)
+library(GGally)
+library(MASS)
+library(gridExtra)
+#install.packages("remotes")
+#remotes::install_github("jtr13/redav")
+library(redav)
+library(stringr)
+library(ggplot2)
+library(lemon)
+```
+
+```{r, eval = TRUE}
+# 1. Integrate all sheets into one data frame
+df<-readxl::read_excel("data/Database-on-education-for-children-with-disabilities_2021.xlsx",sheet=2,col_name=TRUE)
+# df<-df[-1,]
+for (i in 3:10) {
+  df1<-readxl::read_excel("data/Database-on-education-for-children-with-disabilities_2021.xlsx",sheet=i,col_name=TRUE)
+  # df1<-df1[-1,]
+  df<-rbind(df,df1)
+}
+# 2. Remove unnecessary columns
+df<-df[,c(-2:-4,-9,-10,-12,-13,-15:-17)]
+# 3. Rename the columns
+names(df)<-c("Countries", "Development","Indicator","Category","total_point_estimate","without_point_estimate","with_point_estimate","Time")
+# 4. Normalize the time and development
+df$Time<-substr(df$Time, 1, 4)
+df <- df |> mutate(Indicator = paste(word(Indicator, 1), str_to_title(word(Indicator, 2, -1))))
+# 5. Change variable type
+# df$Time<-year(as.Date(df$Time,format = "%Y"))
+df$total_point_estimate <- as.numeric(df$total_point_estimate)
+df$with_point_estimate <- as.numeric(df$with_point_estimate)
+df$without_point_estimate <- as.numeric(df$without_point_estimate)
+# 7. Convert to tidy data
+df1 <- df|>pivot_longer(cols = c('with_point_estimate','without_point_estimate'),
+  names_to = 'functional_difficulty',values_to = 'value') 
+# 8. Deal with missing values
+df1<- df1 |> drop_na("total_point_estimate","value","Development")
+
+```
+Our analysis is divided into three sections. First, we checked the overall performance by using the mean point estimate. By different combinations, we concluded that countries’ development levels had some effects on the overall educational attainment of children with and without functional difficulties. Also, females and urban areas had better comprehensive performances than males and rural regions. Children without functional difficulties perform better than children with functional difficulties. These conclusions all match our intuition. However, to ensure some extreme outliers do not influence the mean point estimates, we looked closely at each indicator with the actual data.  
+  
+In the second section, we first explored the influence of gender and region on attendance, out-of-school, and completion rates across the years. Although it’s hard to conclude genders' impact, the gap in attendance, out-of-school, and completion rates between genders decreased over the years. For the region, we got the same conclusion - urban areas had better educational attainment. Then, we checked the attendance and out-of-school rates among the three education levels. The attendance rate is decreasing in primary, lower secondary, and upper secondary. Thus, many children attended schools but failed to finish their secondary education. It follows that children had better reading skills than numeracy skills, which might be because numeracy skills need more practice in school, while the high out-of-school rate for secondary school prevented students’ learning.    
+  
+In the end, each indicator includes three groups of children: all the children, children with disabilities,and children without disabilities. We explored the relationship between these three variables. We concluded children with disabilities should be a small portion of the population since the total performance is almost the same value as the performance of children without disabilities. In contrast, children with disabilities generally have a lower scores.  
+  
+## Analysis of Indicators' Mean Point Estimate 
+The following analyses are based on the mean point estimate of ANAR(Primary, Lower Secondary, Upper Secondary), Completion Rate, and Foundational Learning Skills(Reading, Numeracy). OOSR indicator is calculated separately since it will negatively influence the mean point estimate.   
+  
+### Mean Point Estimate by Development Levels    
+The figure below used the mean point estimate of ANAR(Primary, Lower Secondary, Upper Secondary), Completion Rate, and Foundational Learning Skills(Reading, Numeracy) because a higher value means better performance for all indicators.       
+Surprisingly, less-developed countries had a lower mean in 2017 than least-developed countries. However, considering that data was only collected in 5 countries in 2017, it is possible that outliers decreased the mean of less developed countries.     
+In 2018, the plot showed that countries with high development levels had higher mean indicators for children with and without disabilities.  
+In 2019, there were no significant differences between less developed countries and more developed countries. More developed countries had a lower mean in the education level of children with and without disabilities. The least developed countries had a much lower mean than the rest.   
+Over the years, the education level of children with and without disabilities decreased for least and more developed countries and increased for less developed countries. Education levels for children with and without disabilities increased similarly in less developed countries. The gap between the education levels of children with disabilities and without disabilities is the smallest in less developed countries and the largest in more developed countries.    
+```{r, message=FALSE,warning=FALSE,fig.align='center',fig.cap="Mean Point Estimate by Development Levels"}
+df |>
+  drop_na("total_point_estimate","with_point_estimate","without_point_estimate","Development") |>
+  filter(Development != 'Not Classified') |>
+  mutate(Development = case_when(
+    Development == 'Less Developed' ~ 'Less',
+    Development == 'Least Developed' ~ 'Least',
+    Development == 'More Developed' ~ 'More')) |>
+  filter(Category == 'Total', 
+        !(Indicator %in% c('OOS Primary', 'OOS Lower Secondary', 'OOS Upper Secondary'))) |>
+  group_by(Development, Time, Indicator) |>
+  summarise(across(c(total_point_estimate,
+                     with_point_estimate,
+                     without_point_estimate), mean)) |>
+  ungroup() |>
+  pivot_longer(cols = !c(Development, Time, Indicator), 
+               names_to = 'functional_difficulty', 
+               values_to = 'value') |>
+  ggplot(aes(x = Development, y = value, fill = functional_difficulty)) +
+    geom_bar(stat='identity', position = position_dodge()) +
+    facet_grid(~Time) +
+    ylab('Mean') +
+    xlab('Development Level') +
+    ggtitle('Mean Point Estimate vs. Development Level') +
+    theme(plot.title = element_text(hjust = 0.5)) +
+    scale_fill_brewer(palette = 'Set2',
+                      name = "Point Estimate",
+                      labels = c('Total', 'With Disabilities', 'Without Disabilities'))
+```  
+    
+    
+### Indicators' Mean Point Estimate Evaluations by Development Levels  
+The Cleveland Dot Plot on the left contains mean point estimates across the years for six indicators. Of the six indicators, half of them are missing in more-developed countries. For other indicators, more-developed countries have higher means in ANAR Primary, Foundational Reading Skills, and Foundational Numeracy Skills for children with and without disabilities. Also, children without disabilities scored higher in attendance rate, completion rate, and foundational numeracy and reading skills than children with disabilities. We can also see in the graph that for all children, the attendance rate of lower secondary is 25% higher than that of upper secondary, and the attendance rate of primary education is about 45% higher than that of lower secondary. These drops in attendance rates were about the same for children with and without disabilities.\newline
+  
+The Cleveland Plot on the right is for out-of-school rates. The least developed countries had the highest upper-secondary out-of-school rate at around 30% and the highest out-of-school rates for primary and lower secondary. Least-developed countries had a higher out-of-school for primary than lower secondary, while less-developed countries had similar out-of-school for lower secondary and primary. More developed countries only had data on out-of-school rates for primary education, which is the lowest among the indicator means of three development levels. Also, children without disabilities had a lower out-of-school rate for all levels of education across all countries than children with disabilities.    
+```{r, fig.width= 16,fig.height=7,out.width="100%",warning=FALSE,message=FALSE,fig.align = "center",fig.cap="Indicator Evaluations by Development Levels"}
+df_indicator <- df |>
+  drop_na("Development", 'total_point_estimate','with_point_estimate','without_point_estimate') |>
+  filter(Category == 'Total') |>
+  group_by(Development, Indicator) |>
+  summarise(across(c(total_point_estimate, with_point_estimate, without_point_estimate), mean)) |>
+  ungroup() |>
+  pivot_longer(!c(Development, Indicator), 
+               names_to = 'functional_difficulty', 
+               values_to = 'value') |>
+  mutate(functional_difficulty = case_when(functional_difficulty == 'total_point_estimate' ~ 'Total',
+                                    functional_difficulty == 'with_point_estimate' ~ 'With Disabilities',
+                                    functional_difficulty == 'without_point_estimate' ~ 'Without Disabilities')) |>
+  filter(functional_difficulty != 'Total') |>
+  mutate(order_value = ifelse(functional_difficulty == 'Children Without Disabilities',
+                              0,
+                              value))
+df_indicator$Indicator <- factor(df_indicator$Indicator,
+                                              levels = c('ANAR Primary',
+                                                         'ANAR Lower Secondary',
+                                                         'ANAR Upper Secondary',
+                                                         'OOS Primary',
+                                                         'OOS Lower Secondary',
+                                                         'OOS Upper Secondary',
+                                                         'Completion Rate Primary',
+                                                         'Foundational Numeracy Skill',
+                                                         'Foundational Reading Skill'))
+indicator_1 <- df_indicator |>
+  filter(!(Indicator %in% c('OOS Primary', 'OOS Lower Secondary', 'OOS Upper Secondary'))) |>
+  ggplot(aes(x = fct_reorder(Indicator,order_value), y = value)) +
+    geom_point(aes(color = functional_difficulty), size = 3) +
+    coord_flip() +
+    facet_grid(~Development) +
+    xlab('Mean Point Estimate') +
+    ylab('WHO Indicators') +
+    ggtitle('Indicator Mean Estimate by Development Levels \n (Attendance rate, Completion Rate, and Skills)') +
+    theme(plot.title = element_text(hjust = 0.5)) +
+    theme(legend.position="bottom") +
+    scale_color_brewer(palette = "Set2",
+                      name = 'Point Estimate') +
+    theme(strip.text.x = element_text(size = 14),
+        axis.text.x = element_text(size = 14),
+        axis.text.y = element_text(size = 14),
+        axis.title = element_text(size = 14),
+        legend.title = element_text(size = 14),
+        legend.text = element_text(size = 14))
+indicator_2 <- df_indicator|>
+  filter((Indicator %in% c('OOS Primary', 'OOS Lower Secondary', 'OOS Upper Secondary'))) |>
+  ggplot(aes(x = fct_rev(fct_relevel(Indicator,levels = c('OOS Upper Secondary', 'OOS Primary', 'OOS Lower Secondary'))), y = value)) +
+    geom_point(aes(color = functional_difficulty), size = 3) +
+    coord_flip() +
+    facet_grid(~Development) +
+    xlab('Mean Point Estimate') +
+    ylab('WHO Indicators') +
+    ggtitle('Indicator Mean Estimate by Development Levels \n (Out-of-school rate)') +
+    theme(plot.title = element_text(hjust = 0.5)) +
+    theme(legend.position="bottom") +
+    scale_color_brewer(palette = "Set2",
+                      name = 'Point Estimate') +
+    theme(strip.text.x = element_text(size = 14),
+        axis.text.x = element_text(size = 14),
+        axis.text.y = element_text(size = 14),
+        axis.title = element_text(size = 14),
+        legend.title = element_text(size = 14),
+        legend.text = element_text(size = 14))
+grid.arrange(indicator_1, indicator_2, nrow = 1, ncol = 2)
+```
+  
+### Mean Point Estimate by Development Levels, Gender, and Region
+The mean point estimate is calculated by taking the means of all indicators except out-of-school indicators collected from 2017 to 2019. No data was collected for females in more developed countries.     
+Females performed better than males in all countries, with or without disabilities, which is similar to the conclusion drawn from the previous two Cleveland Dot Plots that female and male children without disabilities had better numeracy and reading skills and higher attendance rates than children with disabilities. Also, the more developed the country, the more significant the gap between the performance of children with and without disabilities.     
+Urban areas generally had higher means than rural areas, especially for least developed countries. Unlike genders, development levels did not considerably influence regions — the more developed the country, the smaller the gap. Also, children with disabilities in rural areas are doing not as well as children without disabilities, but the difference is not as big as in urban areas.  
+```{r,message=FALSE,warning=FALSE,fig.align='center',fig.cap="Difficulty Point Estimate by Development Levels, Gender, and Region"}
+df |>
+  drop_na("total_point_estimate","with_point_estimate","without_point_estimate","Development") |>
+  filter(Category != 'Total',
+         Development != 'Not Classified',
+         !(Indicator %in% c('OOS Primary', 'OOS Lower Secondary', 'OOS Upper Secondary'))) |>
+  group_by(Development, Category, Time) |>
+  summarise(across(c(total_point_estimate, with_point_estimate, without_point_estimate), mean)) |>
+  ungroup() |>
+  pivot_longer(!c(Development, Category, Time), names_to = 'functional_difficulty', values_to = 'value')|>
+  mutate(functional_difficulty = case_when(functional_difficulty == 'total_point_estimate' ~ 'Total',
+                                    functional_difficulty == 'with_point_estimate' ~ 'With Disabilities',
+                                    functional_difficulty == 'without_point_estimate' ~ 'Without Disabilities')) |>
+  filter(functional_difficulty != 'Total') |>
+  ggplot(aes(x = Time, y = value, fill = Development)) +
+  geom_col(stat = 'Identity', position=position_dodge2(preserve = "single")) +
+  facet_wrap(~Category+functional_difficulty, ncol = 4) +
+  ylab('Mean Point Estimate') +
+  xlab('Year') +
+  ggtitle('Mean Point Estimation Trend \n by Gender, Region, and Development Levels') +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_fill_brewer(palette = "Set2")
+```
+  
+## Analysis of Individual Indicators' Point Estimate   
+  
+### Difficulty Point Estimate by Gender    
+When considering the attendance rates or out-of-school rates of children especially in least and less developed countries, it is very natural to consider the influence of gender. From the group of bar charts shown below, there is no clear overall pattern. However, we can see that for primary and lower secondary education level, the ANAR gap between gender decreases as time goes. Thus, gender is not an influential factor for attendance rate and out-of-school rate individually.  
+
+```{r,fig.width= 10,fig.height=15,out.width="100%",fig.cap="Difficulty Point Estimate by Gender",fig.align='center'}
+ANAR1 <- df1 |> filter(Indicator == "ANAR Primary", str_detect(Category, 'Female|Male'))|>
+  dplyr::select(Countries,Category,functional_difficulty, value,Time)|>
+  pivot_wider(names_from = Category, values_from = value) |>
+  mutate(difference = ifelse((Male - Female) >= 0, "Male > Female","Female >  Male")) |>
+  drop_na()|>
+  ggplot(aes(x=difference)) + 
+  geom_bar(aes(fill = difference)) + 
+  ggtitle("ANAR Primary Point Estimate\n(Male vs. Female)")+
+  theme_linedraw() + 
+  theme(plot.title = element_text(hjust = 0.5))+
+  facet_grid(Time~ functional_difficulty,scales = "free_y", space = "free_y")+
+  theme(legend.position="bottom")+
+  scale_fill_brewer(palette = "Set2")
+
+ANAR2 <- df1|> filter(Indicator == "ANAR Lower Secondary", str_detect(Category, 'Female|Male'))|>
+  dplyr::select(Countries,Category,functional_difficulty, value,Time)|>
+  pivot_wider(names_from = Category, values_from = value) |>
+  mutate(difference = ifelse((Male - Female) >= 0, "Male > Female","Female >  Male")) |>
+  drop_na()|>
+  ggplot(aes(x=difference)) + 
+  geom_bar(aes(fill = difference)) + 
+  ggtitle("ANAR Lower Secondary Point Estimate\n(Male vs. Female)")+
+  theme_linedraw() + 
+  theme(plot.title = element_text(hjust = 0.5))+
+  facet_grid(Time ~ functional_difficulty,scales = "free_y", space = "free_y")+
+  theme(legend.position="bottom")+
+  scale_fill_brewer(palette = "Set2")
+
+ANAR3 <- df1|> filter(Indicator == "ANAR Upper Secondary", str_detect(Category, 'Female|Male'))|>
+  dplyr::select(Countries,Category,functional_difficulty, value,Time)|>
+  pivot_wider(names_from = Category, values_from = value) |>
+  mutate(difference = ifelse((Male - Female) >= 0, "Male > Female","Female >  Male")) |>
+  drop_na()|>
+  ggplot(aes(x=difference)) + 
+  geom_bar(aes(fill = difference)) + 
+  ggtitle("ANAR Upper Secondary Point Estimate\n(Male vs. Female)")+
+  theme_linedraw() + 
+  theme(plot.title = element_text(hjust = 0.5))+
+  facet_grid(Time ~ functional_difficulty,scales = "free_y", space = "free_y")+
+  theme(legend.position="bottom")+
+  scale_fill_brewer(palette = "Set2")
+
+#grid.arrange(ANAR1, ANAR2,ANAR3, ncol=3)
+# OOS Female vs. Male
+OOSR1 <- df1 |> filter(Indicator == "OOS Primary", str_detect(Category, 'Female|Male'))|>
+  dplyr::select(Countries,Category,functional_difficulty, value,Time)|>
+  pivot_wider(names_from = Category, values_from = value) |>
+  mutate(difference = ifelse((Male - Female) >= 0, "Male > Female","Female > Male")) |>
+  drop_na()|>
+  ggplot(aes(x=difference)) + 
+  geom_bar(aes(fill = difference)) + 
+  ggtitle("OOSR Primary Point Estimate\n(Male vs. Female)")+
+  theme_linedraw() + 
+  theme(plot.title = element_text(hjust = 0.5))+
+  facet_grid(Time~ functional_difficulty,scales = "free_y", space = "free_y")+
+  theme(legend.position="bottom")+
+  scale_fill_brewer(palette = "Set2")
+
+OOSR2 <- df1 |> filter(Indicator == "OOS Lower Secondary", str_detect(Category, 'Female|Male'))|>
+  dplyr::select(Countries,Category,functional_difficulty, value,Time)|>
+  pivot_wider(names_from = Category, values_from = value) |>
+  mutate(difference = ifelse((Male - Female) >= 0, "Male > Female","Female > Male")) |>
+  drop_na()|>
+  ggplot(aes(x=difference)) + 
+  geom_bar(aes(fill = difference)) + 
+  ggtitle("OOSR Lower Secondary Point Estimate\n(Male vs. Female)")+
+  theme_linedraw() + 
+  theme(plot.title = element_text(hjust = 0.5))+
+  facet_grid(Time ~ functional_difficulty,scales = "free_y", space = "free_y")+
+  theme(legend.position="bottom")+
+  scale_fill_brewer(palette = "Set2")
+
+OOSR3 <- df1 |> filter(Indicator == "OOS Upper Secondary", str_detect(Category, 'Female|Male'))|>
+  dplyr::select(Countries,Category,functional_difficulty, value,Time)|>
+  pivot_wider(names_from = Category, values_from = value) |>
+  mutate(difference = ifelse((Male - Female) >= 0, "Male > Female","Female > Male")) |>
+  drop_na()|>
+  ggplot(aes(x=difference)) + 
+  geom_bar(aes(fill = difference)) + 
+  ggtitle("OOSR Upper Secondary Point Estimate\n(Male vs. Female)")+
+  theme_linedraw() + 
+  theme(plot.title = element_text(hjust = 0.5))+
+  facet_grid(Time ~ functional_difficulty,scales = "free_y", space = "free_y")+
+  theme(legend.position="bottom")+
+  scale_fill_brewer(palette = "Set2")
+
+grid.arrange(ANAR1, OOSR1,ANAR2, OOSR2,ANAR3,  OOSR3, ncol=2, nrow = 3)
+```
+
+### Difficulty Point Estimate by Region  
+The following group of bar charts shows how region affects ANAR and OOSR. Children in urban areas had higher attendance than those in rural areas. The data from OOSR confirms this conclusion since children in rural areas had higher out-of-school rates than those in urban areas. Also, functional difficulties did not affect the considerable gap between urban and rural areas. Thus, region had a profound impact on a child's educational attainment.   
+
+```{r,fig.width= 10,fig.height=15,out.width="100%",fig.cap="Difficulty Point Estimate by Region",fig.align='center'}
+# ANAR Urban vs. Rural
+ANAR4 <- df1 |> filter(Indicator == "ANAR Primary", str_detect(Category, 'Urban|Rural'))|>
+   dplyr::select(Countries,Category,functional_difficulty, value,Time)|>
+  pivot_wider(names_from = Category, values_from = value) |>
+  mutate(difference = ifelse((Urban - Rural) >= 0, "Urban > Rural","Rural >  Urban")) |>
+  drop_na()|>
+  ggplot(aes(x=difference)) + 
+  geom_bar(aes(fill = difference)) + 
+  ggtitle("ANAR Primary Point Estimate (Urban vs. Rural)")+
+  theme_linedraw() + 
+  theme(plot.title = element_text(hjust = 0.5))+
+  facet_grid(Time~ functional_difficulty,scales = "free_y", space = "free_y")+
+  theme(legend.position="bottom") +
+  scale_fill_brewer(palette = "Set2")
+
+ANAR5<- df1 |> filter(Indicator == "ANAR Lower Secondary", str_detect(Category, 'Urban|Rural'))|>
+   dplyr::select(Countries,Category,functional_difficulty, value,Time)|>
+  pivot_wider(names_from = Category, values_from = value) |>
+  mutate(difference = ifelse((Urban - Rural) >= 0, "Urban > Rural","Rural >  Urban")) |>
+  drop_na()|>
+  ggplot(aes(x=difference)) + 
+  geom_bar(aes(fill = difference)) + 
+  ggtitle("ANAR Lower Secondary Point Estimate (Urban vs. Rural)")+
+  theme_linedraw() + 
+  theme(plot.title = element_text(hjust = 0.5))+
+  facet_grid(Time ~ functional_difficulty,scales = "free_y", space = "free_y")+
+  theme(legend.position="bottom") +
+  scale_fill_brewer(palette = "Set2")
+
+ANAR6<-df1 |> filter(Indicator == "ANAR Upper Secondary", str_detect(Category, 'Urban|Rural'))|>
+   dplyr::select(Countries,Category,functional_difficulty, value,Time)|>
+  pivot_wider(names_from = Category, values_from = value) |>
+  mutate(difference = ifelse((Urban - Rural) >= 0, "Urban > Rural","Rural >  Urban")) |>
+  drop_na()|>
+  ggplot(aes(x=difference)) + 
+  geom_bar(aes(fill = difference)) + 
+  ggtitle("ANAR Upper Secondary Point Estimate (Urban vs. Rural)")+
+  theme_linedraw() + 
+  theme(plot.title = element_text(hjust = 0.5))+
+  facet_grid(Time ~ functional_difficulty,scales = "free_y", space = "free_y")+
+  theme(legend.position="bottom") +
+  scale_fill_brewer(palette = "Set2")
+
+#grid.arrange(ANAR4, ANAR5,ANAR6, ncol=3)
+OOSR4 <- df1 |> filter(Indicator == "OOS Primary", str_detect(Category, 'Urban|Rural'))|>
+   dplyr::select(Countries,Category,functional_difficulty, value,Time)|>
+  pivot_wider(names_from = Category, values_from = value) |>
+  mutate(difference = ifelse((Urban - Rural) >= 0, "Urban > Rural","Rural >  Urban")) |>
+  drop_na()|>
+  ggplot(aes(x=difference)) + 
+  geom_bar(aes(fill = difference)) + 
+  ggtitle("OOSR Primary Point Estimate (Urban vs. Rural)")+
+  theme_linedraw() + 
+  theme(plot.title = element_text(hjust = 0.5))+
+  facet_grid(Time~ functional_difficulty,scales = "free_y", space = "free_y")+
+  theme(legend.position="bottom") +
+  scale_fill_brewer(palette = "Set2")
+
+OOSR5 <- df1 |> filter(Indicator == "OOS Lower Secondary", str_detect(Category, 'Urban|Rural'))|>
+   dplyr::select(Countries,Category,functional_difficulty, value,Time)|>
+  pivot_wider(names_from = Category, values_from = value) |>
+  mutate(difference = ifelse((Urban - Rural) >= 0, "Urban > Rural","Rural >  Urban")) |>
+  drop_na()|>
+  ggplot(aes(x=difference)) + 
+  geom_bar(aes(fill = difference)) + 
+  ggtitle("OOSR Lower Secondary Point Estimate (Urban vs. Rural)")+
+  theme_linedraw() + 
+  theme(plot.title = element_text(hjust = 0.5))+
+  facet_grid(Time ~ functional_difficulty,scales = "free_y", space = "free_y")+
+  theme(legend.position="bottom") +
+  scale_fill_brewer(palette = "Set2")
+
+OOSR6 <-df1 |> filter(Indicator == "OOS Upper Secondary", str_detect(Category, 'Urban|Rural'))|>
+   dplyr::select(Countries,Category,functional_difficulty, value,Time)|>
+  pivot_wider(names_from = Category, values_from = value) |>
+  mutate(difference = ifelse((Urban - Rural) >= 0, "Urban > Rural","Rural >  Urban")) |>
+  drop_na()|>
+  ggplot(aes(x=difference)) + 
+  geom_bar(aes(fill = difference)) + 
+  ggtitle("OOSR Upper Secondary Point Estimate (Urban vs. Rural)")+
+  theme_linedraw() + 
+  theme(plot.title = element_text(hjust = 0.5))+
+  facet_grid(Time ~ functional_difficulty,scales = "free_y", space = "free_y")+
+  theme(legend.position="bottom") +
+  scale_fill_brewer(palette = "Set2")
+grid.arrange(ANAR4,OOSR4,ANAR5, OOSR5,ANAR6, OOSR6, ncol=2,nrow = 3)
+``` 
+
+
+
+### Completion Rate Primary Difficulty Point Estimate  
+The completion rate is "Percentage of cohort of children or young people three to five years older than the intended age for the last grade of each level of education."  
+The left-hand-side bar chart presents whether gender affects children's primary completion rate. Females have a higher completion rate than males, which is valid for children with and without functional disabilities. However, we can see that the gap between females and males decreased.  
+The right-hand-side bar chart shows that children in urban areas have much higher completion rates than children in rural areas. Although children are three to five years older than the intended age of primary education, urban areas still have a higher completion rate. Thus, the urban and rural gap matches our common sense that urban areas have more educational resources and higher education coverage rates.    
+```{r,fig.width= 10,fig.height=5,out.width="100%",fig.cap="Completion Rate Primary Point Estimate",fig.align='center'}
+CR1<- df1 |> filter(Indicator == "Completion Rate Primary", str_detect(Category, 'Female|Male'))|>
+   dplyr::select(Countries,Category,functional_difficulty, value,Time)|>
+  pivot_wider(names_from = Category, values_from = value) |>
+  mutate(difference = ifelse((Male - Female) >= 0, "Male > Female","Female > Male")) |>
+  drop_na()|>
+  ggplot(aes(x=difference)) + 
+  geom_bar(aes(fill = difference)) + 
+  ggtitle("Completion Rate Primary Point Estimate (Male vs. Female)")+
+  theme_linedraw() + 
+  theme(plot.title = element_text(hjust = 0.5))+
+  facet_grid(Time~ functional_difficulty,scales = "free_y", space = "free_y")+
+  theme(legend.position="bottom") +
+  scale_fill_brewer(palette = "Set2")
+
+CR2 <-df1 |> filter(Indicator == "Completion Rate Primary", str_detect(Category, 'Urban|Rural'))|>
+   dplyr::select(Countries,Category,functional_difficulty, value,Time)|>
+  pivot_wider(names_from = Category, values_from = value) |>
+  mutate(difference = ifelse((Urban - Rural) >= 0, "Urban > Rural","Rural > Urban")) |>
+  drop_na()|>
+  ggplot(aes(x=difference)) + 
+  geom_bar(aes(fill = difference)) + 
+  ggtitle("Completion Rate Primary Point Estimate (Urban vs. Rural)")+
+  theme_linedraw() + 
+  theme(plot.title = element_text(hjust = 0.5))+
+  facet_grid(Time~ functional_difficulty,scales = "free_y", space = "free_y")+
+  theme(legend.position="bottom") +
+  scale_fill_brewer(palette = "Set2")
+
+grid.arrange(CR1,CR2, ncol=2)
+```    
+  
+### Comparison between Education Levels      
+The following two plots compared the total point estimate of ANAR and OOSR for all three education levels.  
+The graph below shows the point estimate of ANAR for the three education levels: primary, lower secondary, and upper secondary. All three years shows that children at the primary education level tended to have higher attendance rate than the other higher levels.     
+```{r,fig.align='center',fig.cap=" Comparison between Education Levels"}
+strings <- c("ANAR Primary", "ANAR Lower Secondary","ANAR Upper Secondary")
+
+df3 <- df1 |> filter(Category == "Total", str_detect(Indicator, paste(strings, collapse = "|")))
+ggplot(data = df3,aes(x = total_point_estimate, y = fct_reorder2(Countries, Indicator == "ANAR Primary", total_point_estimate, .desc = FALSE),color = Indicator))+
+  geom_point()+
+  ggtitle("ANAR Total Point Estimate\n(Primary vs. Lower Secondary vs. Upper Secondary)") + 
+  xlab("Point Estimate") +
+  ylab("Country") +
+  theme_linedraw() + 
+  theme(plot.title = element_text(hjust = 0.5,size = 10))+
+  facet_grid( rows = vars(Time),scales = "free_y", space = "free_y") +
+  scale_color_brewer(palette = "Set2")
+```
+  
+The graph below shows the point estimate of OOSR for the three education levels: primary, lower secondary, and upper secondary. All three years shows children in upper secondary education level tend to have higher out-of-school rate than the other higher levels.   
+```{r,fig.align='center',fig.cap=" Comparison between Education Levels"}
+strings <- c("OOS Primary", "OOS Lower Secondary","OOS Upper Secondary")
+
+df4 <- df1 |> filter(Category == "Total", str_detect(Indicator, paste(strings, collapse = "|")))
+
+ggplot(data = df4,aes(x = total_point_estimate, y = fct_reorder2(Countries, Indicator == "OOS Upper Secondary", total_point_estimate, .desc = FALSE),color = Indicator))+
+  geom_point()+
+  ggtitle("OOSR Total Point Estimate\n(Primary vs. Lower Secondary vs. Upper Secondary)") + 
+  xlab("Point Estimate") +
+  ylab("Country") +
+  theme_linedraw() + 
+  theme(plot.title = element_text(hjust = 0.5,size = 10))+
+  facet_grid( rows = vars(Time),scales = "free_y", space = "free_y") +
+  scale_color_brewer(palette = "Set2")
+```    
+  
+Combine the observations from the two Cleveland dot plots, we can conclude that children received the most basic education, but were prone to drop out of school before the age of 18. Thus, they still did not receive a complete K-12 education.   
+    
+### Functional Learning Skills Total Point Estimate      
+This Cleveland dot plot shows the total point estimate of children's foundational learning skills. The blue dot, represents reading skills, are almost always greater than the red one, which means numeracy skills. Thus, children with and without functional difficulties had higher reading skills than numeracy skills. It makes sense since word recognition, literal questions, and inferential question are frequently in contact in their daily life. Then recall that children have higher out-of-school rate in upper secondary school; so they did not have the opportunity to have more practice on numeracy skills, which usually require more time to success.   
+
+```{r,fig.align='center',fig.cap=" Comparison between Education Levels"}
+df2 <- df1 |> filter(Category == "Total", str_detect(Indicator, "Foundational Numeracy Skill|Foundational Reading Skill"))
+
+ggplot(data = df2,aes(x = value, y = fct_reorder2(Countries, Indicator == "Foundational Reading Skill", value, .desc = FALSE),color = Indicator))+
+  geom_point()+
+  ggtitle("Foundational learning Skills Total Point Estimate \n (Reading vs. Numeracy)") + 
+  xlab("Point Estimate") +
+  ylab("Country") + 
+  theme_linedraw() + 
+  theme(plot.title = element_text(hjust = 0.5,size = 9))+
+  facet_grid( Time ~ functional_difficulty,scales = "free_y", space = "free_y") +
+  scale_color_brewer(palette = "Set2")
+```  
+
+
+## Relationship between Point Estimates  
+We are going to use the following parallel coordinate charts to explore the relationship between total point estimate, point estimate with functional difficulties, and point estimate without functional difficulties.           
+```{r,fig.width= 13,fig.height=8,out.width="100%",fig.cap="Relationship between ANAR Indicator's Point Estimates",fig.align='center'}
+ANAR_Primary<-df |> filter(Indicator == "ANAR Primary",Category == "Total")
+ANAR_LowerSecondary<-df |> filter(Indicator =="ANAR Lower Secondary",Category == "Total")
+ANAR_UpperSecondary<-df |> filter(Indicator =="ANAR Upper Secondary",Category == "Total")
+
+ANAR_Primary$Time <- as.character(ANAR_Primary$Time)
+ANAR_LowerSecondary$Time <- as.character(ANAR_LowerSecondary$Time)
+ANAR_UpperSecondary$Time <- as.character(ANAR_UpperSecondary$Time)
+
+p1 <- ggparcoord(data = ANAR_Primary,
+           columns = 5:7,
+           groupColumn = "Time",showPoints = TRUE,title = "ANAR Primary",scale = "uniminmax") +
+           scale_color_brewer(palette = "Set2") + 
+  scale_x_discrete(labels=c("total_point_estimate" = "Total", 
+                                      "with_point_estimate" = "With Disability",
+                                      "without_point_estimate" = "Without Disability"))+
+  theme(plot.title = element_text(hjust = 0.5,size = 17))+
+  theme(axis.title.x = element_text(size = 16),axis.title.y = element_text(size = 16))+
+  theme(axis.text=element_text(size=12))+
+  theme(legend.title = element_text(size=15),
+        legend.text = element_text(size=15),
+        legend.key.size = unit(1, 'cm'),
+        legend.key.height = unit(1, 'cm'), 
+        legend.key.width = unit(1, 'cm')) 
+
+p2 <- ggparcoord(data = ANAR_LowerSecondary,
+           columns = 5:7,
+           groupColumn = "Time",showPoints = TRUE,title = "ANAR Lower Secondary",scale = "uniminmax") +
+           scale_color_brewer(palette = "Set2") + 
+  scale_x_discrete(labels=c("total_point_estimate" = "Total", 
+                                      "with_point_estimate" = "With Disability",
+                                      "without_point_estimate" = "Without Disability"))+
+  theme(plot.title = element_text(hjust = 0.5,size = 17))+
+  theme(axis.title.x = element_text(size = 16),axis.title.y = element_text(size = 16))+
+  theme(axis.text=element_text(size=12))+
+  theme(legend.title = element_text(size=15),
+        legend.text = element_text(size=15),
+        legend.key.size = unit(1, 'cm'),
+        legend.key.height = unit(1, 'cm'), 
+        legend.key.width = unit(1, 'cm')) 
+
+p3 <- ggparcoord(data = ANAR_UpperSecondary,
+           columns = 5:7,
+           groupColumn = "Time",showPoints = TRUE,title = "ANAR Upper Secondary",scale = "uniminmax") +
+           scale_color_brewer(palette = "Set2") + 
+  scale_x_discrete(labels=c("total_point_estimate" = "Total", 
+                                      "with_point_estimate" = "With Disability",
+                                      "without_point_estimate" = "Without Disability"))+
+  theme(plot.title = element_text(hjust = 0.5,size = 17))+
+  theme(axis.title.x = element_text(size = 16),axis.title.y = element_text(size = 16))+
+  theme(axis.text=element_text(size=12))+
+  theme(legend.title = element_text(size=15),
+        legend.text = element_text(size=15),
+        legend.key.size = unit(1, 'cm'),
+        legend.key.height = unit(1, 'cm'), 
+        legend.key.width = unit(1, 'cm')) 
+grid.arrange(p1,p2,p3, ncol=2,nrow = 2)
+```
+For the three indicators of ANAR, the point estimate of total children and the point estimation of children without difficulties has a clear parallel relationship. Also, they have almost the same values. Although "with_point_estimate" has some differences from "without_point_estimate," the overall trend is a parallel relationship. There is some unique information for the three indicators.  
+a) ANAR Primary: there are two outliers, one in 2018 and the other in 2019.  
+b) ANAR Lower Secondary: The variation of point estimate is more significant than the ANAR Primary indicator.   
+c) ANAR Upper Secondary: Nearly half of the "with_point_estimate" is higher than "without_point_estimate" in 2019.      
+
+
+```{r,fig.width= 13,fig.height=8,out.width = "100%",fig.cap="Relationship between OOSR Indicator's Point Estimates",fig.align='center'}
+OOS_Primary<-df |> filter(Indicator == "OOS Primary",Category == "Total")
+OOS_LowerSecondary<-df |> filter(Indicator =="OOS Lower Secondary",Category == "Total")
+OOS_UpperSecondary<-df |> filter(Indicator =="OOS Upper Secondary",Category == "Total")
+
+OOS_Primary$Time <- as.character(OOS_Primary$Time)
+OOS_LowerSecondary$Time <- as.character(OOS_LowerSecondary$Time)
+OOS_UpperSecondary$Time <- as.character(OOS_UpperSecondary$Time)
+
+p4<-ggparcoord(data = OOS_Primary,
+           columns = 5:7,
+           groupColumn = "Time",showPoints = TRUE,title = "OOS Primary Indicator",scale = "uniminmax") +
+           scale_color_brewer(palette = "Set2") + 
+  scale_x_discrete(labels=c("total_point_estimate" = "Total", 
+                                      "with_point_estimate" = "With Disability",
+                                      "without_point_estimate" = "Without Disability")) +
+  theme(plot.title = element_text(hjust = 0.5,size = 17))+
+  theme(axis.title.x = element_text(size = 16),axis.title.y = element_text(size = 16))+
+  theme(axis.text=element_text(size=12))+
+  theme(legend.title = element_text(size=15),
+        legend.text = element_text(size=15),
+        legend.key.size = unit(1, 'cm'),
+        legend.key.height = unit(1, 'cm'), 
+        legend.key.width = unit(1, 'cm'))
+p5<-ggparcoord(data = OOS_LowerSecondary,
+           columns = 5:7,
+           groupColumn = "Time",showPoints = TRUE,title = "OOS Lower Secondary",scale = "uniminmax") +
+           scale_color_brewer(palette = "Set2") + 
+  scale_x_discrete(labels=c("total_point_estimate" = "Total", 
+                                      "with_point_estimate" = "With Disability",
+                                      "without_point_estimate" = "Without Disability"))+
+  theme(plot.title = element_text(hjust = 0.5,size = 17))+
+  theme(axis.title.x = element_text(size = 16),axis.title.y = element_text(size = 16))+
+  theme(axis.text=element_text(size=12))+
+  theme(legend.title = element_text(size=15),
+        legend.text = element_text(size=15),
+        legend.key.size = unit(1, 'cm'),
+        legend.key.height = unit(1, 'cm'), 
+        legend.key.width = unit(1, 'cm'))
+p6<-ggparcoord(data = OOS_UpperSecondary,
+           columns = 5:7,
+           groupColumn = "Time",showPoints = TRUE,title = "OOS Upper Secondary",scale = "uniminmax") +
+           scale_color_brewer(palette = "Set2")+ 
+            scale_x_discrete(labels=c("total_point_estimate" = "Total", 
+                                      "with_point_estimate" = "With Disability",
+                                      "without_point_estimate" = "Without Disability"))+
+  theme(plot.title = element_text(hjust = 0.5,size = 17))+
+  theme(axis.title.x = element_text(size = 16),axis.title.y = element_text(size = 16))+
+  theme(axis.text=element_text(size=12))+
+  theme(legend.title = element_text(size=15),
+        legend.text = element_text(size=15),
+        legend.key.size = unit(1, 'cm'),
+        legend.key.height = unit(1, 'cm'), 
+        legend.key.width = unit(1, 'cm')) 
+par(mfrow=c(3,1))
+grid.arrange(p4,p5,p6, ncol=2,nrow = 2)
+```    
+   
+For the three indicators of OOSR, point estimate of total children and the point estimate of children without difficulties has parallel relationship.  
+Specifically,  
+a) OOSR Primary: variable with_point_estimate tend to have parallel relationship with variable without_point_estimate. Also, there are two outliers.    
+b) OOSR Lower Secondary: most of the value in variable with_point_estimate have higher value than without_point_estimate in year 2018; but the overall relationship is still parallel.  
+c)OOSR Upper Secondary: year 2018 and 2019's without_point_estimate and with_point_estimate have similar value. However, for year 2017, without_point_estimate and with_point estimate have negative relationship.   
+  
+We can see that total point estimate and point estimate with functional difficulties are almost the same. Considering point estimate with functional difficulties fluctuated around the value of total point estimate, the number of children with functional difficulties should be a small portion of the survey's total population so that its value did not influence the consistence between total point estimate and point estimate without functional difficulties.   

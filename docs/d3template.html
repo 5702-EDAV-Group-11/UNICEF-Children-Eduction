@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+		<meta charset="utf-8">
+		<title><My First D3 Bar Chart></title>
+		<script src="https://d3js.org/d3.v7.js"></script>
+	</head>
+
+	<body>
+		<script>
+		    const bardata = [300,100,150,225,75,275];
+		    const svg = d3.select("body")
+			.append("svg")
+			.attr("width","600")
+			.attr("height", "500");
+		   svg.selectAll("rect")
+			.data(bardata)
+			.enter()
+			.append("rect")
+			.attr("x", "20")
+			.attr("y",  (d,i) => i*50+25)
+			.attr("width", d => d)
+			.attr("height", "40") 
+			.attr("fill","green");
+		</script>
+	</body>
+
+</html>

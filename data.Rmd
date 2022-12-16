@@ -1,8 +1,88 @@
 # Data 
-
+```{r setup, include=TRUE}
+knitr::opts_chunk$set(echo = TRUE)
+```
 ## Sources
+```{r,message=FALSE,warning = FALSE, eval = FALSE,echo=FALSE}
+#necessary packages
+library(readxl)
+library(mice)
+library(lubridate)
+library(tidyverse)
+library(dplyr)
+library(VIM)
+library(GGally)
+library(MASS)
+library(gridExtra)
+#install.packages("remotes")
+#remotes::install_github("jtr13/redav")
+library(redav)
+```
+Our group checked many websites to decide which topic to focus on. Between education and healthy food, we chose children's education as our topic and visited UNICEF’s authentical website for a confidential dataset. There are many datasets on that website, and the dataset of children’s education with or without disabilities interests us the most. It’s not only an interesting but meaningful topic.  
+  
+UNICEF maintains the dataset. The UNICEF Global databases contain a set of 202 countries as reported through the State of the World’s Children Statistical Annex 2017. However, in this dataset, only 32 countries are presented. The data is well-organized in an excel file.   
+  
+The data was collected from the 6th round of the Multiple Indicator Cluster Survey (MICS6). There are ten sheets in this dataset that provide information on four education indicators (Adjusted net attendance rate (ANAR), Out of school rate (OOR), Completion rate, and foundational learning skills) supporting national education monitoring for children with and without disabilities in 32 countries and areas. The dataset considers three levels of education for two indicators: ANAR Primary, ANAR Lower Secondary, ANAR Upper Secondary, OOSR Primary, OOSR Lower Secondary, and OOSR Upper Secondary. The Completion rate is recorded on the primary level only. Foundational learning skills consist of foundational reading and numeracy skills, recorded for children aged 7 to 14.  
+  
+Indicator Definition:  
+1. ANAR: Percentage of children of a given age that are attending an education level compatible with their age or attending a higher education level.  
+2. OOSR: Percentage of children or young people in the official age range for a given level of education who are not attending either pre-primary, primary, secondary, or higher levels of education.   
+3. Completion Rate: Percentage of cohort of children or young people three to five years older than the intended age for the last grade of each level of education (primary, lower secondary, or upper secondary) who have completed that level of education. Only the primary level is presented.  
+4. Foundational Learning Skills: Percentage of children achieving minimum proficiency in (i) reading and (ii) numeracy. If the child succeeds in 1) word recognition, 2) literal questions, and 3) inferential questions, s/he is considered to have foundational reading skills. If the child succeeds in 1) number reading, 2) number discrimination, 3) addition, and 4) pattern recognition, s/he is considered to have foundational numeracy skills.  
+   
+For all the 9 tables in the collected excel from UNICEF, the table headers are all the same. There are 18 variables in total, which are all characters. Since not all the variables are useful, we removed some columns during the data process, such as “Data source,” “Upper limit” and “Lower limit.” We also merged the 9 sheets into a big data frame with 1440 records. And all the point estimates’ units are the percentage. The dataset also has several practical issues. First, the method of how the data is collected can not promise precision. The data for different countries and areas are estimated by point estimating, so there is a gap between the estimated value and the real value. Second, the sample sizes for those countries and areas are unknown. Third, the years in which the data collection took place differ for different countries and areas, and the period format is also different. For example, some are “yyyy-yyyy”, such as “2017-2018,” while some are “yyyy”, such as “2017”. Fourth, there are many missing values for children with functional difficulties. Unfortunately, considering the values for different countries are limited and unrelated, it is difficult to impute by mean value or other methods.   
+  
+Due to these problems, we did further data cleaning based on this big data frame.  
+  
+## Cleaning / transformation  
+   
+1. Integrate all sheets into one data frame: Use the "readxl" package to read the 9 tables separately. All nine tables have the same table header; hence, directly use “rbind” to integrate all the data frames into a whole data frame.  
+2. Remove unnecessary columns: Remove seven columns that are unrelated to our project aim or might not be useful when drawing figures, such as “lower limit,” “upper limit,” and “data source.”   
+3. Rename the columns: Rename the columns with simple and clear labels.   
+4. Normalize the Time and Development: For the column “Time”, there are columns in the format like “yyyy-yyyy”; we use the beginning year for this time to replace it. For example, we use 2017 to replace “2017-2018”. For the column "Development," we capitalize the first letter of all words.    
+5. Change variable type: Convert the point estimate into numeric data type by “as.numeric.” Since we will use Time as a category, we are not going to convert the data type.  
+7. Convert to tidy data: The point estimate for children with and without functional difficulties are presented in two columns. However, since they are one variable, we use pivot_longer to convert it into a tidy version.  
+8. Deal with missing values: According to the analysis of missing values in 3.3, we decide to delete the rows with missing values in columns “total_point_estimate,” “with_point_estimate,” “without_point_estimate,” and "Development" 
 
-## Cleaning / transformation
+```{r,echo=FALSE}
+# 1. Integrate all sheets into one data frame
+df<-readxl::read_excel("data/Database-on-education-for-children-with-disabilities_2021.xlsx",sheet=2,col_name=TRUE)
+df<-df[-1,]
+for (i in 3:10) {
+  df1<-readxl::read_excel("data/Database-on-education-for-children-with-disabilities_2021.xlsx",sheet=i,col_name=TRUE)
+  df1<-df1[-1,]
+  df<-rbind(df,df1)
+}
+# 2. Remove unnecessary columns
+df<-df[,c(-2:-4,-9,-10,-12,-13,-15:-17)]
+# 3. Rename the columns
+names(df)<-c("Countries", "Development","Indicator","Category","total_point_estimate","without_point_estimate","with_point_estimate","Time")
+# 4. Normalize the time and development
+df$Time<-substr(df$Time, 1, 4)
+df <- df %>% mutate(Indicator = paste(word(Indicator, 1), str_to_title(word(Indicator, 2, -1))))
+# 5. Change variable type
+df$total_point_estimate <- as.numeric(df$total_point_estimate)
+df$with_point_estimate <- as.numeric(df$with_point_estimate)
+df$without_point_estimate <- as.numeric(df$without_point_estimate)
+# 6. Convert to tidy data
+df1 <- df%>%pivot_longer(cols = c('with_point_estimate','without_point_estimate'),
+  names_to = 'functional_difficulty',values_to = 'value') 
+# 7. Deal with missing values
+df1<- df1 %>% drop_na("total_point_estimate","value","Development")
+```
+## Missing value analysis  
 
-## Missing value analysis
-
+We first look at the missing value for each column:    
+```{r,echo=FALSE,fig.width=20,out.width= "100%"}
+md.pattern(df,plot = FALSE)
+```  
+  
+The matrix returned with entry value missing = 0 and observed = 1 shows the total number of missing rows for each pattern. The last row represent the number of missing rows of each variable. We can see that the "without_point_estimate" and "with_point_estimate" has the most missing values, especially "with_point_estimate", counts to 455, up to 65% of the whole missing values numbers (698).  
+  
+Then, we use the redav package to explore the missing pattern:    
+```{r,fig.width= 15, fig.height=8,out.width = "100%",out.height = "100%", fig.show = "holde",echo=FALSE}
+plot_missing(df, percent = FALSE)+theme_grey(base_size = 16)
+```  
+  
+From the top bar chart, we can see that missing values in variable "with_point_estimate" is much  higher than other variables. For missing values, "with_point_estimate" and "without_point_estimate" rank second and third.
+From the two bottom graphs, it is easy to conclude that the most frequent missing pattern is only missing "with_point_estimate" variables. Considering "total_point_estimate", "with_point_estimate", "without_point_estimate", and "Development" we deleted rows with missing values in these columns. 

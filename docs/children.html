@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+		<meta charset="utf-8">
+		<title><My First D3 Bar Chart></title>
+		<script src="https://d3js.org/d3.v7.js"></script>
+</head>
+
+<style>
+	h2, #note {
+		text-align: center;
+	}
+
+	form, #note {
+		margin: 0 auto; 
+		width: 650px;
+	}
+
+	input[type = 'reset'] {
+		display: block;
+		margin: 0 auto;
+	}
+
+	.correct {
+		color: green;
+	}
+
+	.wrong {
+		color: red;
+	}
+</style>
+
+<body>
+<h2>After reading all the previous analysis, let's take a small "quiz".</h2>
+<form>
+<div id = 'q1_div'>
+<label for = 'q1' id = 'q1'><h3>Question 1: Does a more developed country suggest a overall better school performance over the years?</h3></label>
+<input name = 'q1' type = 'radio' value = 'q1_a' id = 'q1_a'> Yes </input><br><br>
+<input name = 'q1' type = 'radio' value = 'q1_b' id = 'q1_b'> No </input></div>
+
+
+<div id = 'q2_div'>
+<label for = 'q2' id = 'q2'><h3>Question 2: Is region an influential factor for the ANAR (Attendance Rate) and OOSR (Out-of-school Rate) indicators?</h3></label>
+<input name = 'q2' type = 'radio' value = 'q2_a' id = 'q2_a'> Yes </input><br><br>
+<input name = 'q2' type = 'radio' value = 'q2_b' id = 'q2_b'> No </input></div>
+
+<div id = 'q3_div'>
+<label for = 'q3' id = 'q3'><h3>Question 3: Do children with functional difficulties have lower or higher attendance rate? What about out-of-school rate?</h3></label>
+<input name = 'q3' type = 'radio' value = 'q3_a' id = 'q3_a'> Higher attendance rate and lower out-of-school rate </input><br><br>
+<input name = 'q3' type = 'radio' value = 'q3_b' id = 'q3_b'> Lower attendance rate and higher out-of-school rate </input></div><br><br>
+
+<input type = 'reset' value = 'Try again' onclick= 'clear_response()'>
+</form>
+
+<div id = 'note'>
+<h4>Click the blue box to refresh your memories ;)</h4>
+<p>(One refresh per try)</p>
+<svg></svg>
+</div>
+	<script>
+		const responses = {
+			q1_a:'Correct!',
+			q1_b:'Incorrect. Check the Cleveland Dot Plots in Chapter 4.1.2. Children with functional difficulties generally have a lower school completion rate in more developed countries than less developed countries, and children in less developed countries have skills not as good as in more developed countries.',
+			q2_a:'Correct!',
+			q2_b:'Incorrect. Bar charts in 4.2.2 shows children in urban area  have higher attendance rate (ANAR), and children in rural area have higher out-of-school rate (OOSR).',
+			q3_a:'Incorrect. Children with functional disabilities have lower attendace rate and higher out-of-school rate.',
+			q3_b:'Correct!'
+		};
+		const q1_a = d3.select('#q1_div').append('p').attr('class','correct').attr('id','response_q1a').text(responses.q1_a).style('display','none');
+		const q1_b = d3.select('#q1_div').append('p').attr('class','wrong').attr('id','response_q1b').text(responses.q1_b).style('display','none');
+		d3.select('#q1_a').on('click', function(){
+			q1_a.style('display','block');
+			q1_b.style('display','none');
+			});
+		d3.select('#q1_b').on('click', function(){
+			q1_a.style('display','none');
+			q1_b.style('display','block');});
+
+		const q2_a = d3.select('#q2_div').append('p').attr('class','correct').attr('id','response_q2a').text(responses.q2_a).style('display','none');
+		const q2_b = d3.select('#q2_div').append('p').attr('class','wrong').attr('id','response_q2b').text(responses.q2_b).style('display','none');
+		d3.select('#q2_a').on('click', function(){
+			q2_a.style('display','block');
+			q2_b.style('display','none');
+			});
+		d3.select('#q2_b').on('click', function(){
+			q2_a.style('display','none');
+			q2_b.style('display','block');});
+
+		const q3_a = d3.select('#q3_div').append('p').attr('class','wrong').attr('id','response_q3a').text(responses.q3_a).style('display','none');
+		const q3_b = d3.select('#q3_div').append('p').attr('class','correct').attr('id','response_q3b').text(responses.q3_b).style('display','none');
+		d3.select('#q3_a').on('click', function(){
+			q3_a.style('display','block');
+			q3_b.style('display','none');
+			});
+		d3.select('#q3_b').on('click', function(){
+			q3_a.style('display','none');
+			q3_b.style('display','block');});
+
+		const clear_response = function () {
+			q1_a.style('display','none');
+			q1_b.style('display','none');
+			q2_a.style('display','none');
+			q2_b.style('display','none');
+			q3_a.style('display','none');
+			q3_b.style('display','none');
+
+			refresh_pic1.style('display','none');
+			refresh_pic2.style('display','none');
+			refresh_pic3.style('display','none');
+		};
+
+		const pics = {
+			1:'data/pic1.png',
+			2:'data/pic2.png',
+			3:'data/pic3.png'
+		}
+
+		const w = 650;
+	  const h = 400;
+	  const margin = {top: 25, right: 0, bottom: 25,
+	      left: 25};
+	  const innerWidth = w - margin.left - margin.right;
+	  const innerHeight = h - margin.top - margin.bottom;
+
+	  const svg = d3.select("svg")
+	      .attr("width", w)
+	      .attr("height", h);
+
+	  const rect = svg.append("rect")
+	      .attr("x", 0)
+	      .attr("y", 0)
+	      .attr("width", w)
+	      .attr("height", h)
+	      .attr("fill", "lightblue");
+
+		var refresh_pic1 = svg.append('image')
+		.attr('xlink:href',pics[1])
+		.attr('width',650)
+		.attr('height',400)
+		.style('display','none')
+
+		var refresh_pic2 = svg.append('image')
+		.attr('xlink:href',pics[2])
+		.attr('width',650)
+		.attr('height',400)
+		.style('display','none')
+
+		var refresh_pic3 = svg.append('image')
+		.attr('xlink:href',pics[3])
+		.attr('width',650)
+		.attr('height',400)
+		.style('display','none')
+
+		rect.on('click', function(){
+			var num = Math.round(d3.randomUniform(0,3)());
+			if (num == 1) {
+				refresh_pic1.style('display','block');
+				refresh_pic2.style('display','none');
+				refresh_pic3.style('display','none');
+			} else if (num == 2) {
+				refresh_pic2.style('display','block');
+				refresh_pic1.style('display','none');
+				refresh_pic3.style('display','none');
+			} else if (num == 3) {
+				refresh_pic3.style('display','block');
+				refresh_pic1.style('display','none');
+				refresh_pic2.style('display','none');
+			}
+		})
+	</script>
+
+</body>
+
+</html>
