@@ -17,6 +17,10 @@
 		width: 650px;
 	}
 
+	button {
+		margin: 0 auto; 
+	}
+
 	input[type = 'reset'] {
 		display: block;
 		margin: 0 auto;
@@ -52,16 +56,15 @@
 
 <input type = 'reset' value = 'Try again' onclick= 'clear_response()'>
 </form>
-
 <div id = 'note'>
-<h4>Click the blue box to refresh your memories ;)</h4>
-<p>(One refresh per try)</p>
+<h4>Click the <button type = 'button' onclick= 'refresh_pic()'>Refresh</button> button to refresh your memories ;)</h4>
+<p>(Random refresh pictures are generated)</p>
 <svg></svg>
 </div>
 	<script>
 		const responses = {
 			q1_a:'Correct!',
-			q1_b:'Incorrect. Check the Cleveland Dot Plots in Chapter 4.1.2. Children with functional difficulties generally have a lower school completion rate in more developed countries than less developed countries, and children in less developed countries have skills not as good as in more developed countries.',
+			q1_b:'Incorrect. Check the Cleveland Dot Plots in Chapter 4.1.2.  As the increase of development levels, the mean point estimates also increase for all the indicators in the left-hand-side Cleveland dot plot.',
 			q2_a:'Correct!',
 			q2_b:'Incorrect. Bar charts in 4.2.2 shows children in urban area  have higher attendance rate (ANAR), and children in rural area have higher out-of-school rate (OOSR).',
 			q3_a:'Incorrect. Children with functional disabilities have lower attendace rate and higher out-of-school rate.',
@@ -111,10 +114,10 @@
 		};
 
 		const pics = {
-			1:'data/pic1.png',
-			2:'data/pic2.png',
-			3:'data/pic3.png'
-		}
+			1:'https://user-images.githubusercontent.com/89812117/208003912-91ec2103-5a98-419a-953e-5a190e803971.png',
+			2:'https://user-images.githubusercontent.com/89812117/208004140-4e8c55f1-339c-4d0d-83af-e1facd30252c.png',
+			3:'https://user-images.githubusercontent.com/89812117/208004195-4d218583-6196-4625-a52f-4f7b3bb6448d.png'
+		};
 
 		const w = 650;
 	  const h = 400;
@@ -132,7 +135,7 @@
 	      .attr("y", 0)
 	      .attr("width", w)
 	      .attr("height", h)
-	      .attr("fill", "lightblue");
+	      .attr("fill", "white");
 
 		var refresh_pic1 = svg.append('image')
 		.attr('xlink:href',pics[1])
@@ -152,7 +155,7 @@
 		.attr('height',400)
 		.style('display','none')
 
-		rect.on('click', function(){
+		const refresh_pic = function(){
 			var num = Math.round(d3.randomUniform(0,3)());
 			if (num == 1) {
 				refresh_pic1.style('display','block');
@@ -167,7 +170,7 @@
 				refresh_pic1.style('display','none');
 				refresh_pic2.style('display','none');
 			}
-		})
+		}
 	</script>
 
 </body>
